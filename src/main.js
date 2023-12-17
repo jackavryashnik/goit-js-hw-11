@@ -1,11 +1,11 @@
-// Описаний у документації
 import iziToast from 'izitoast';
-// Додатковий імпорт стилів
 import 'izitoast/dist/css/iziToast.min.css';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const input = document.querySelector('.search-input');
 const btn = document.querySelector('.search-btn');
-const itemList = document.querySelector('.item-list');
+const gallery = document.querySelector('.gallery');
 const request = {
   key: '41300766-2a2685b0426849001fa971f21',
   q: '',
@@ -13,7 +13,13 @@ const request = {
   orientation: 'horizontal',
   safesearch: true,
 };
-const URL = `https://pixabay.com/api/?${new URLSearchParams(request)}`;
+const options = {
+  overlayOpacity: 0.8,
+  captionsData: 'alt',
+  captionDelay: 250,
+};
+new SimpleLightbox('.gallery a', options);
+let URL = `https://pixabay.com/api/?`;
 
 const getImagesFromAPI = url => {
   fetch(url)
@@ -22,12 +28,59 @@ const getImagesFromAPI = url => {
       return response.json();
     })
     .then(response => {
-      console.log(response);
+      if (!response.hits[0]) {
+        iziToast.error({
+          message:
+            'Sorry, there are no images matching your search query. Please try again!',
+        });
+
+        gallery.innerHTML = '';
+        return;
+      }
+
+      renderMarkup(response);
     })
-    .catch(error => console.log(error));
+    .catch(error => {
+      console.log(error);
+    });
 };
 
-btn.addEventListener('click', () => {
+btn.addEventListener('click', event => {
+  event.preventDefault();
+  gallery.innerHTML = `<span class="loader"></span>`;
+
   request.q = input.value;
+  URL += new URLSearchParams(request);
+  input.value = '';
   getImagesFromAPI(URL);
 });
+
+const renderMarkup = data => {
+  let markup = data.hits
+    .map(
+      ({
+        webformatURL,
+        largeImageURL,
+        tags,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => {
+        return `<li class="gallery-item">
+        <a class="gallery-link" href=${largeImageURL}>
+          <img class="gallery-image" src=${webformatURL} data-source=${largeImageURL} alt="${tags}" width="360" height="200"/>
+          <ul class="image-stats">
+            <li class="stats-item"><h3 class="stat-title">Likes</h3><p class="stat-value">${likes}</p></li>
+            <li class="stats-item"><h3 class="stat-title">Views</h3><p class="stat-value">${views}</p></li>
+            <li class="stats-item"><h3 class="stat-title">Comments</h3><p class="stat-value">${comments}</p></li>
+            <li class="stats-item"><h3 class="stat-title">Downloads</h3><p class="stat-value">${downloads}</p></li>
+          </ul>  
+          </a>
+        </li>`;
+      }
+    )
+    .join('');
+
+  gallery.innerHTML = markup;
+};
