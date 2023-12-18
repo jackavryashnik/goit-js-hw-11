@@ -18,7 +18,6 @@ const options = {
   captionsData: 'alt',
   captionDelay: 250,
 };
-new SimpleLightbox('.gallery a', options);
 let URL = `https://pixabay.com/api/?`;
 
 const getImagesFromAPI = url => {
@@ -91,3 +90,5 @@ const renderMarkup = data => {
 
   gallery.innerHTML = markup;
 };
+
+new SimpleLightbox('.gallery a', options);
