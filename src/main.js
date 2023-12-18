@@ -32,6 +32,13 @@ const getImagesFromAPI = url => {
         iziToast.error({
           message:
             'Sorry, there are no images matching your search query. Please try again!',
+          backgroundColor: '#EF4040',
+          messageColor: '#FAFAFB',
+          position: 'topRight',
+          iconUrl: './img/bi_x-octagon.svg',
+          iconColor: '#ffffff',
+          maxWidth: 432,
+          messageSize: 16,
         });
 
         gallery.innerHTML = '';
