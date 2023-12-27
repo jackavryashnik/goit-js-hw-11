@@ -35,7 +35,7 @@ const getImagesFromAPI = url => {
           backgroundColor: '#EF4040',
           messageColor: '#FAFAFB',
           position: 'topRight',
-          iconUrl: './img/bi_x-octagon.svg',
+          iconUrl: '/img/bi_x-octagon.svg',
           iconColor: '#ffffff',
           maxWidth: 432,
           messageSize: 16,
